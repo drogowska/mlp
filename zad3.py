@@ -1,8 +1,10 @@
 import math
+import random
 
 dataIn = []
 hidden = []
-layer = []
+alfa = 0.01
+d =[]
 
 def readFromFile():  
     with open('transformation.txt') as file:
@@ -21,24 +23,44 @@ def neuron(x, w):
         suma += x[i]*w[i]
     return suma
     
+def layer(x, w, howManyInLayer):
+    y = []
+    for i in range(howManyInLayer):
+        y[i] = neuron(x, w[i])
+        y[i] = actFunction(y[i])
+    return y
+
+
 def actFunction(y):              #wyjście y to wyniki funkcji nuron
     return 1/(1+math.e**(-1*y))
 
-def changeW(w, x): #zmiana wag
+def changeWeight(w, x, numberOfWag): #zmiana wag
+     suma = 0
+     if not w:
+        random.seed()
+        w = [0] * numberOfWag
+        for i in range(1,numberOfWag):
+            w[i] = random.random()
      for i in range(len(x)):
-        w[i] = w[i] - 2*alfa*(x[i]* d[i])
+        suma += x[i]* d[i]
+        w[i] = w[i] - 2*alfa*(suma)
      return w
 
-def f(z, y, howMuchLayers):
+def errors(z, y, w, howMuchLayers):
+    tmp = 0.0
     for p in range(howMuchLayers):
         for j in range(len(y)):
-            d[p][j] = z[j] - y[j]
-
+            if(p == howMuchLayers - 1): #ostatnia warstwa
+                d[p][j] = y[j] - z[j]
+            for i in range(len(d[p+1])):
+                tmp += w[i] * d[p+1][i] #propagacja wsteczna
+            d[p][j] = tmp
+    return d
+        
 
 def pochodna(z):
     return actFunction(z) * (1 - actFunction(z))
 
-alfa = 0.1
-d =[]
+
 readFromFile()
 print(dataIn)
