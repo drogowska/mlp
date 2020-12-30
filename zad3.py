@@ -1,16 +1,19 @@
 import math
 
-tab = []
+dataIn = []
 hidden = []
 layer = []
 
-def readFromFile():  #czyta jako stringa
-    i = 0
+def readFromFile():  
     with open('transformation.txt') as file:
         for line in file.readlines():
-            a, b, c, d = line.strip().split(",")
-            tab.append([a, b, c, d])
-            i+=1
+            line = line.replace("\n", "")  # usuwa znaki końca linii
+            line = line.replace(" ", "")   # usuwa spacje między liczbami
+            tmp = [] 
+            for i in range(4):   #można jeszcze zamienić 4 na ilość znaków w lini
+                for char in line[i]:
+                    tmp.append(int(char))
+            dataIn.append(tmp)
 
 def neuron(x, w):
     suma = 0
@@ -38,4 +41,4 @@ def pochodna(z):
 alfa = 0.1
 d =[]
 readFromFile()
-print(tab)
+print(dataIn)
